@@ -14,6 +14,7 @@ After the EDA, the dataset is transformed to drop columns and rows that are not 
 The dataset has a total of 124494 records, and it holds 1163 classes for each device. The total amount of reported failures is 106, this tell us that only 0.09% of devices failed over time, however, the replace_rate, which is the percentage of devices removed from the logs is  97.33%, which means that only 2.67% had an entry in the last day of the recorded data. If we have a look at fig 1, it can be noticed that in the six first dates there is a reduction of more than 400 devices, which are not related with a surge in failures. 
 
 fig 1. Number of Devices per Day
+
 This number also is correlated with the number of records per device which can be found in the notebook. 
 The attributes 1-9 where also examined as a time series. Attributes 7 and 8 have the same values. Attribute 1 has high values which looks like noise  in comparison with the other attributes, this could mean attribute1 is made of encoded status codes.  Also device, ‘S1F0P3G2' which is a failed device, has a very characteristic plot when they fail, as seen in fig 2. From the plots it could also be noted that attributes 2, 3, 4, 7 and 8  have high number of 0s in their data, which can mean a possible error or data aggregation problems. 
 
