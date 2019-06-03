@@ -7,13 +7,15 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import confusion_matrix, recall_score, precision_score, roc_auc_score, roc_curve
 import itertools
-from time import sleep
 
+from pandas.plotting import register_matplotlib_converters
+register_matplotlib_converters()
 
 # ============ Data Load ============ #
 df = pd.read_csv('../data/device_failure.csv')
-# df.describe
-
+print(df.describe)
+print(df.shape)
+print(df[df.failure == 1].nunique())
 
 # ============ Dates range ============ #
 df['date'] = df['date'].apply(dateutil.parser.parse, dayfirst=False)
@@ -58,10 +60,10 @@ failure_records = df.failure.count()
 """
 record_devices = df.groupby('device')['date'].count()
 
-# gplot(x=record_devices.index, y=record_devices,
-#      ylabel='No of Records', xlabel='Devices',
-#      tittle='Number of Records per Device',
-#      bar=True)
+gplot(x=record_devices.index, y=record_devices,
+      ylabel='No of Records', xlabel='Devices',
+      tittle='Number of Records per Device',
+      bar=True)
 
 
 # ============ No of Devices each day ============ #
@@ -69,9 +71,9 @@ record_devices = df.groupby('device')['date'].count()
 devices_per_date = df.groupby('date')[['device']].count()
 # print(devices_per_date)
 
-# gplot(x=devices_per_date.index, y=devices_per_date,
-#     ylabel='No of Devices', xlabel='Date',
-#     tittle='Number of Devices Per Day')
+gplot(x=devices_per_date.index, y=devices_per_date,
+     ylabel='No of Devices', xlabel='Date',
+     tittle='Number of Devices Per Day')
 
 
 # ============ Calculation of Failure rates and survival rates ============ #
@@ -98,8 +100,8 @@ for c in df_col:
 
 # ============ Atrributes Time Series ============ #
 
-devices_sample = ['W1F0DXT8', 'S1F0S4MG', 'W1F0KRWP', 'W1F0W3GE', 'W1F1BAE6', 'S1F0LD15',
-                  'W1F0X5TL', 'Z1F1R76A', 'S1F135F3', 'S1F12Y53', 'S1F0P3G2', 'Z1F0K451']
+devices_sample = ['S1F0S4MG', 'W1F0KRWP', 'W1F0W3GE', 'W1F1BAE6', 'S1F0LD15',
+                  'W1F0X5TL', 'Z1F1R76A', 'S1F135F3', 'S1F12Y53', 'S1F0P3G2']
 
 devices_sample_df = df[df['device'] == devices_sample[0]]
 
@@ -130,6 +132,7 @@ for col in range(9):
         plt.xlabel('Date', fontsize=5)
         plt.title('Attribute' + str(col + 1))
 
+xplot.legend(devices_sample)
 plt.show()
 
 
@@ -215,7 +218,7 @@ def evaluate_model(predictions, probs, train_predictions, train_probs):
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
     plt.title('ROC Curves')
-
+    plt.show()
 
 # ============ Data Transformation / Feature Engineering ============ #
 
@@ -239,8 +242,6 @@ for col in range(8):  # Enhance features of dataset with mean, std, var and medi
         'attribute' + str(col + 1)].median()
 
 data_grp = data_tfe.groupby(['device', 'date']).mean()  # Group by device and date
-for col in range(8):
-    data_grp['attribute' + str(col + 1) + '_std'] = data_grp['attribute' + str(col + 1)].std(axis=1, level=1)
 
 # ============ RandomForest Modelling ============ #
 # Extract the labels
@@ -257,7 +258,7 @@ train = train.fillna(train.mean())
 test = test.fillna(test.mean())
 
 # Create the model with 100 trees
-model = RandomForestClassifier(n_estimators=50,
+model = RandomForestClassifier(n_estimators=10,
                                bootstrap=True,
                                max_features='sqrt',
                                n_jobs=-1,
