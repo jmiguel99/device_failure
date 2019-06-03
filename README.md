@@ -1,5 +1,4 @@
-# device_failure
-Predict the failure of devices in Dataset
+
 # AWS Device Failure Test
 by: Jose Miguel Lopez
 # Overview
